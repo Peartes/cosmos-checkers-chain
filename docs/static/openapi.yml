@@ -30765,6 +30765,11 @@ definitions:
     properties:
       gameIndex:
         type: string
+  alice.checkers.checkers.MsgDeleteGameResponse:
+    type: object
+    properties:
+      gameIndex:
+        type: string
   alice.checkers.checkers.Params:
     type: object
     description: Params defines the parameters for the module.

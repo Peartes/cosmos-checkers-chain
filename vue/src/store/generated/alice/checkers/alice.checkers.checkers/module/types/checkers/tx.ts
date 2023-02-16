@@ -13,6 +13,15 @@ export interface MsgCreateGameResponse {
   gameIndex: string;
 }
 
+export interface MsgDeleteGame {
+  creator: string;
+  index: string;
+}
+
+export interface MsgDeleteGameResponse {
+  gameIndex: string;
+}
+
 const baseMsgCreateGame: object = { creator: "", black: "", red: "" };
 
 export const MsgCreateGame = {
@@ -162,10 +171,143 @@ export const MsgCreateGameResponse = {
   },
 };
 
+const baseMsgDeleteGame: object = { creator: "", index: "" };
+
+export const MsgDeleteGame = {
+  encode(message: MsgDeleteGame, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.index !== "") {
+      writer.uint32(18).string(message.index);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteGame {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteGame } as MsgDeleteGame;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.index = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDeleteGame {
+    const message = { ...baseMsgDeleteGame } as MsgDeleteGame;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.index !== undefined && object.index !== null) {
+      message.index = String(object.index);
+    } else {
+      message.index = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDeleteGame): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.index !== undefined && (obj.index = message.index);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgDeleteGame>): MsgDeleteGame {
+    const message = { ...baseMsgDeleteGame } as MsgDeleteGame;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.index !== undefined && object.index !== null) {
+      message.index = object.index;
+    } else {
+      message.index = "";
+    }
+    return message;
+  },
+};
+
+const baseMsgDeleteGameResponse: object = { gameIndex: "" };
+
+export const MsgDeleteGameResponse = {
+  encode(
+    message: MsgDeleteGameResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.gameIndex !== "") {
+      writer.uint32(10).string(message.gameIndex);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgDeleteGameResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgDeleteGameResponse } as MsgDeleteGameResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.gameIndex = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgDeleteGameResponse {
+    const message = { ...baseMsgDeleteGameResponse } as MsgDeleteGameResponse;
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = String(object.gameIndex);
+    } else {
+      message.gameIndex = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgDeleteGameResponse): unknown {
+    const obj: any = {};
+    message.gameIndex !== undefined && (obj.gameIndex = message.gameIndex);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgDeleteGameResponse>
+  ): MsgDeleteGameResponse {
+    const message = { ...baseMsgDeleteGameResponse } as MsgDeleteGameResponse;
+    if (object.gameIndex !== undefined && object.gameIndex !== null) {
+      message.gameIndex = object.gameIndex;
+    } else {
+      message.gameIndex = "";
+    }
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   CreateGame(request: MsgCreateGame): Promise<MsgCreateGameResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  DeleteGame(request: MsgDeleteGame): Promise<MsgDeleteGameResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -182,6 +324,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgCreateGameResponse.decode(new Reader(data))
+    );
+  }
+
+  DeleteGame(request: MsgDeleteGame): Promise<MsgDeleteGameResponse> {
+    const data = MsgDeleteGame.encode(request).finish();
+    const promise = this.rpc.request(
+      "alice.checkers.checkers.Msg",
+      "DeleteGame",
+      data
+    );
+    return promise.then((data) =>
+      MsgDeleteGameResponse.decode(new Reader(data))
     );
   }
 }
