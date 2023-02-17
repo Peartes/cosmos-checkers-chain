@@ -22,11 +22,11 @@ func (k msgServer) CreateGame(goCtx context.Context, msg *types.MsgCreateGame) (
 	newIndex := strconv.FormatUint(systemInfo.NextId, 10)
 
 	newGame := rules.New()
-	storedGame := types.StoredGame {
+	storedGame := types.StoredGame{
 		Index: newIndex,
 		Black: msg.Black,
-		Red: msg.Red,
-		Turn: rules.PieceStrings[newGame.Turn],
+		Red:   msg.Red,
+		Turn:  rules.PieceStrings[newGame.Turn],
 		Board: newGame.String(),
 	}
 

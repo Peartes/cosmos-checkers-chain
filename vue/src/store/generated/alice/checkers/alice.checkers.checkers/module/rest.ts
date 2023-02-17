@@ -13,6 +13,15 @@ export interface CheckersMsgCreateGameResponse {
   gameIndex?: string;
 }
 
+export interface CheckersMsgPlayGameResponse {
+  /** @format int64 */
+  capturedX?: string;
+
+  /** @format int64 */
+  capturedY?: string;
+  winner?: string;
+}
+
 /**
  * Params defines the parameters for the module.
  */
