@@ -55,6 +55,7 @@ func TestCreate1GameHasSaved(t *testing.T) {
 		Turn:  "b",
 		Black: bob,
 		Red:   carol,
+		MoveCount: 0,
 	}, game1)
 }
 
