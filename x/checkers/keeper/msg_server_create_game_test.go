@@ -58,6 +58,29 @@ func TestCreate1GameHasSaved(t *testing.T) {
 	}, game1)
 }
 
+func TestCreate1GameEmitted(t *testing.T) {
+	msgServer, _, ctx := setupMsgServerCreateGame(t)
+	msgServer.CreateGame(ctx, &types.MsgCreateGame{
+		Creator: alice,
+		Black:   bob,
+		Red:     carol,
+	})
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	require.NotNil(t, sdkCtx)
+	events := sdk.StringifyEvents(sdkCtx.EventManager().ABCIEvents())
+	require.Len(t, events, 1)
+	event := events[0]
+	require.EqualValues(t, sdk.StringEvent{
+		Type: "new-game-created",
+		Attributes: []sdk.Attribute{
+			{Key: "creator", Value: alice},
+			{Key: "game-index", Value: "1"},
+			{Key: "black", Value: bob},
+			{Key: "red", Value: carol},
+		},
+	}, event)
+}
+
 func setupMsgServerCreateGame(t testing.TB) (types.MsgServer, keeper.Keeper, context.Context) {
 	k, ctx := keepertest.CheckersKeeper(t)
 	checkers.InitGenesis(ctx, *k, *types.DefaultGenesis())

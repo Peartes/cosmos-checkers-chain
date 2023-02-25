@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/alice/checkers/x/checkers/rules"
 	"github.com/alice/checkers/x/checkers/types"
@@ -38,7 +39,7 @@ func (k msgServer) PlayGame(goCtx context.Context, msg *types.MsgPlayGame) (*typ
 	if err != nil {
 		panic(err.Error())
 	}
-	
+
 	// Is it player turn ?
 	if !game.TurnIs(player) {
 		return nil, sdkerrors.Wrapf(types.ErrNotPlayerTurn, "%s", player)
@@ -60,9 +61,19 @@ func (k msgServer) PlayGame(goCtx context.Context, msg *types.MsgPlayGame) (*typ
 	storedGame.Turn = rules.PieceStrings[game.Turn]
 	k.Keeper.SetStoredGame(ctx, storedGame)
 
-	return &types.MsgPlayGameResponse {
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(types.MovePlayedEventType,
+			sdk.NewAttribute(types.MovePlayedEventCreator, msg.Creator),
+			sdk.NewAttribute(types.MovePlayedEventGameIndex, msg.GameIndex),
+			sdk.NewAttribute(types.MovePlayedEventCapturedX, strconv.FormatInt(int64(captured.X), 10)),
+			sdk.NewAttribute(types.MovePlayedEventCapturedY, strconv.FormatInt(int64(captured.Y), 10)),
+			sdk.NewAttribute(types.MovePlayedEventWinner, rules.PieceStrings[game.Winner()]),
+		),
+	)
+
+	return &types.MsgPlayGameResponse{
 		CapturedX: int64(captured.X),
 		CapturedY: int64(captured.Y),
-		Winner: rules.PieceStrings[game.Winner()],
+		Winner:    rules.PieceStrings[game.Winner()],
 	}, nil
 }
