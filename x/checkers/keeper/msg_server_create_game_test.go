@@ -56,6 +56,8 @@ func TestCreate1GameHasSaved(t *testing.T) {
 		Black: bob,
 		Red:   carol,
 		MoveCount: 0,
+		BeforeIndex: types.NoFifoIndex,
+		AfterIndex: types.NoFifoIndex,
 	}, game1)
 }
 

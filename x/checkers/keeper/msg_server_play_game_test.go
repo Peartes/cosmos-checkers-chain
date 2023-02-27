@@ -76,6 +76,8 @@ func TestPlayMoveSavedGame(t *testing.T) {
 			Red:   carol,
 			Board: "*b*b*b*b|b*b*b*b*|***b*b*b|**b*****|********|r*r*r*r*|*r*r*r*r|r*r*r*r*",
 			MoveCount: 1,
+			BeforeIndex: types.NoFifoIndex,
+			AfterIndex: types.NoFifoIndex,
 		},
 	}, storedGame)
 }
