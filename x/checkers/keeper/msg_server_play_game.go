@@ -60,6 +60,7 @@ func (k msgServer) PlayGame(goCtx context.Context, msg *types.MsgPlayGame) (*typ
 	storedGame.Board = game.String()
 	storedGame.Turn = rules.PieceStrings[game.Turn]
 	storedGame.MoveCount++
+	storedGame.Deadline = types.FormatDeadline(types.GetNextDeadline(ctx))
 	systemInfo, found := k.Keeper.GetSystemInfo(ctx)
 	if (!found) {
 		panic("SystemInfo not found")
