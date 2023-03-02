@@ -40,6 +40,8 @@ func TestCreate1GameHasSaved(t *testing.T) {
 	require.True(t, found)
 	require.EqualValues(t, types.SystemInfo{
 		NextId: 2,
+		FifoHeadIndex: "1",
+		FifoTailIndex: "1",
 	}, systemInfo)
 
 	// make sure stored games array length is greater than 1
@@ -58,6 +60,8 @@ func TestCreate1GameHasSaved(t *testing.T) {
 		MoveCount: 0,
 		BeforeIndex: types.NoFifoIndex,
 		AfterIndex: types.NoFifoIndex,
+		Deadline: types.FormatDeadline(types.GetNextDeadline(sdk.UnwrapSDKContext(context))),
+		Winner: "*",
 	}, game1)
 }
 

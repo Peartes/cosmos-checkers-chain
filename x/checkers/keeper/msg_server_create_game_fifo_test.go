@@ -44,6 +44,8 @@ func TestCreate3GamesHaveSavedFifo(t *testing.T) {
 		MoveCount:   uint64(0),
 		BeforeIndex: "-1",
 		AfterIndex:  "2",
+		Deadline: types.FormatDeadline(types.GetNextDeadline(sdkContext)),
+		Winner: "*",
 	}, game1)
 	game2, found := k.GetStoredGame(sdkContext, "2")
 	require.True(t, found)
@@ -56,6 +58,8 @@ func TestCreate3GamesHaveSavedFifo(t *testing.T) {
 		MoveCount:   uint64(0),
 		BeforeIndex: "1",
 		AfterIndex:  "-1",
+		Deadline: types.FormatDeadline(types.GetNextDeadline(sdkContext)),
+		Winner: "*",
 	}, game2)
 
 	// Third game
@@ -82,6 +86,8 @@ func TestCreate3GamesHaveSavedFifo(t *testing.T) {
 		MoveCount:   uint64(0),
 		BeforeIndex: "-1",
 		AfterIndex:  "2",
+		Deadline: types.FormatDeadline(types.GetNextDeadline(sdkContext)),
+		Winner: "*",
 	}, game1)
 	game2, found = k.GetStoredGame(sdkContext, "2")
 	require.True(t, found)
@@ -94,6 +100,8 @@ func TestCreate3GamesHaveSavedFifo(t *testing.T) {
 		MoveCount:   uint64(0),
 		BeforeIndex: "1",
 		AfterIndex:  "3",
+		Deadline: types.FormatDeadline(types.GetNextDeadline(sdkContext)),
+		Winner: "*",
 	}, game2)
 	game3, found := k.GetStoredGame(sdkContext, "3")
 	require.True(t, found)
@@ -106,5 +114,7 @@ func TestCreate3GamesHaveSavedFifo(t *testing.T) {
 		MoveCount:   uint64(0),
 		BeforeIndex: "2",
 		AfterIndex:  "-1",
+		Deadline: types.FormatDeadline(types.GetNextDeadline(sdkContext)),
+		Winner: "*",
 	}, game3)
 }

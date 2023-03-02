@@ -78,12 +78,14 @@ func TestPlayMoveSavedGame(t *testing.T) {
 			MoveCount: 1,
 			BeforeIndex: types.NoFifoIndex,
 			AfterIndex: types.NoFifoIndex,
+			Deadline: types.FormatDeadline(types.GetNextDeadline(sdk.UnwrapSDKContext(context))),
+			Winner: "*",
 		},
 	}, storedGame)
 }
 
 func TestPlayGame1Emitted(t *testing.T) {
-	msgServer, _, context := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, k, context := SetupMsgServerWithOneGameForPlayMove(t)
 	msgServer.PlayGame(context, &types.MsgPlayGame{
 		Creator:   bob,
 		GameIndex: "1",
@@ -94,6 +96,7 @@ func TestPlayGame1Emitted(t *testing.T) {
 	})
 	ctx := sdk.UnwrapSDKContext(context)
 	require.NotNil(t, ctx)
+	storedGame, _ := k.GetStoredGame(ctx, "1")
 	events := sdk.StringifyEvents(ctx.EventManager().ABCIEvents())
 	require.Len(t, events, 2)
 	event := events[0]
@@ -105,12 +108,13 @@ func TestPlayGame1Emitted(t *testing.T) {
 			{Key: "captured-x", Value: "-1"},
 			{Key: "captured-y", Value: "-1"},
 			{Key: "winner", Value: "*"},
+			{Key: "board", Value: storedGame.Board},
 		},
 	}, event)
 }
 
 func TestPlayGame2Emitted(t *testing.T) {
-	msgServer, _, context := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, k, context := SetupMsgServerWithOneGameForPlayMove(t)
 	msgServer.PlayGame(context, &types.MsgPlayGame{
 		Creator:   bob,
 		GameIndex: "1",
@@ -128,6 +132,7 @@ func TestPlayGame2Emitted(t *testing.T) {
 		ToY:       4,
 	})
 	ctx := sdk.UnwrapSDKContext(context)
+	storedGame, _ := k.GetStoredGame(ctx, "1")
 	require.NotNil(t, ctx)
 	events := sdk.StringifyEvents(ctx.EventManager().ABCIEvents())
 	require.Len(t, events, 2)
@@ -139,5 +144,6 @@ func TestPlayGame2Emitted(t *testing.T) {
 		{Key: "captured-x", Value: "-1"},
 		{Key: "captured-y", Value: "-1"},
 		{Key: "winner", Value: "*"},
-	}, event.Attributes[5:])
+		{Key: "board", Value:  storedGame.Board},
+	}, event.Attributes[6:])
 }

@@ -51,6 +51,8 @@ func TestPlayMove2Games2MovesHasSavedFifo(t *testing.T) {
         MoveCount:   uint64(1),
         BeforeIndex: "-1",
         AfterIndex:  "2",
+		Winner: "*",
+		Deadline: types.FormatDeadline(types.GetNextDeadline(ctx)),
     }, game1)
     game2, found := keeper.GetStoredGame(ctx, "2")
     require.True(t, found)
@@ -63,5 +65,7 @@ func TestPlayMove2Games2MovesHasSavedFifo(t *testing.T) {
         MoveCount:   uint64(1),
         BeforeIndex: "1",
         AfterIndex:  "-1",
+		Deadline: types.FormatDeadline(types.GetNextDeadline(ctx)),
+		Winner: "*",
     }, game2)
 }
