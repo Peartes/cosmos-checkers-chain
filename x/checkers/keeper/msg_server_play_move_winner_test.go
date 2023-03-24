@@ -40,7 +40,6 @@ func TestPlayMoveUpToWinner(t *testing.T) {
 	}, game)
 	
 	events := sdk.StringifyEvents(sdkContext.EventManager().ABCIEvents())
-	println(events)
 	require.Len(t, events, 2)
 	event := events[0]
 	require.Equal(t, event.Type, "move-played")
