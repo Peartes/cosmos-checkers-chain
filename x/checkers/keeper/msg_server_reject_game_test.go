@@ -9,7 +9,8 @@ import (
 )
 
 func TestReject1GameNoPlay(t *testing.T) {
-	msgServer, k, ctx := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, k, ctx, ctrl, _ := SetupMsgServerWithOneGameForPlayMove(t)
+	defer ctrl.Finish()
 
 	// Reject the game
 	_, err := msgServer.RejectGame(ctx, &types.MsgRejectGame{
@@ -35,8 +36,8 @@ func TestReject1GameNoPlay(t *testing.T) {
 }
 
 func TestGameRejected1GameBlackMove(t *testing.T) {
-	msgServer, k, ctx := SetupMsgServerWithOneGameForPlayMove(t)
-	
+	msgServer, k, ctx, ctrl, escrow := SetupMsgServerWithOneGameForPlayMove(t)
+	defer ctrl.Finish()
 	// Let black make a move
 	_, playErr := msgServer.PlayGame(ctx, &types.MsgPlayGame{
 		Creator: bob,
@@ -68,6 +69,8 @@ func TestGameRejected1GameBlackMove(t *testing.T) {
 	storedGames := k.GetAllStoredGame(sdkContext)
 	require.Len(t, storedGames, 0)
 
+	escrow.ExpectAny(ctx)
+
 	events := sdk.StringifyEvents(sdkContext.EventManager().ABCIEvents())
 	require.EqualValues(t, sdk.StringEvent{
 		Type: types.GameRejectedEventType,
@@ -76,4 +79,23 @@ func TestGameRejected1GameBlackMove(t *testing.T) {
 			{Key: types.GameRejectedEventGameIndex, Value: "1"},
 		},
 	}, events[0])
+}
+
+func TestRejectGameByRedOneCalledBank(t *testing.T) {
+	msgServer, _, context, ctrl, escrow := SetupMsgServerWithOneGameForPlayMove(t)
+	defer ctrl.Finish()
+	payBob := escrow.ExpectPay(context, bob, 45).Times(1)
+	escrow.ExpectRefund(context, bob, 45).Times(1).After(payBob)
+	msgServer.PlayGame(context, &types.MsgPlayGame{
+		Creator:   bob,
+		GameIndex: "1",
+		FromX:     1,
+		FromY:     2,
+		ToX:       2,
+		ToY:       3,
+	})
+	msgServer.RejectGame(context, &types.MsgRejectGame{
+		Creator:   carol,
+		GameIndex: "1",
+	})
 }

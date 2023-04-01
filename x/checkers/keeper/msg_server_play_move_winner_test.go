@@ -11,8 +11,10 @@ import (
 )
 
 func TestPlayMoveUpToWinner(t *testing.T) {
-	msgServer, k, ctx := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, k, ctx, ctrl, escrow := SetupMsgServerWithOneGameForPlayMove(t)
 	sdkContext := sdk.UnwrapSDKContext(ctx)
+	
+	defer ctrl.Finish()
 
 	testutil.PlayAllMoves(t, msgServer, ctx, "1",  testutil.Game1Moves)
 
@@ -39,6 +41,8 @@ func TestPlayMoveUpToWinner(t *testing.T) {
 		Winner:      "b",
 	}, game)
 	
+	escrow.ExpectPay(ctx, bob, game.Wager)
+
 	events := sdk.StringifyEvents(sdkContext.EventManager().ABCIEvents())
 	require.Len(t, events, 2)
 	event := events[0]

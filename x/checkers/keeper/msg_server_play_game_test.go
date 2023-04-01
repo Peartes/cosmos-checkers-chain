@@ -4,16 +4,20 @@ import (
 	"context"
 	"testing"
 
+	"github.com/alice/checkers/testutil"
 	keepertest "github.com/alice/checkers/testutil/keeper"
 	"github.com/alice/checkers/x/checkers"
 	"github.com/alice/checkers/x/checkers/keeper"
 	"github.com/alice/checkers/x/checkers/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
 )
 
-func SetupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper.Keeper, context.Context) {
+func SetupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper.Keeper, context.Context, *gomock.Controller, *testutil.MockBankEscrowKeeper) {
 	k, ctx := keepertest.CheckersKeeper(t)
+	ctrl := gomock.NewController(t)
+    bankMock := testutil.NewMockBankEscrowKeeper(ctrl)
 	checkers.InitGenesis(ctx, *k, *types.DefaultGenesis())
 	server := keeper.NewMsgServerImpl(*k)
 	context := sdk.WrapSDKContext(ctx)
@@ -22,11 +26,11 @@ func SetupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper
 		Black:   bob,
 		Red:     carol,
 	})
-	return server, *k, context
+	return server, *k, context, ctrl, bankMock
 }
 
 func TestPlayMove(t *testing.T) {
-	msgServer, _, context := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, _, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
 	playMoveResponse, err := msgServer.PlayGame(context, &types.MsgPlayGame{
 		Creator:   bob,
 		GameIndex: "1",
@@ -44,7 +48,7 @@ func TestPlayMove(t *testing.T) {
 }
 
 func TestPlayMoveSavedGame(t *testing.T) {
-	msgServer, k, context := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, k, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
 
 	// Make a move as black
 	playGameResponse, err := msgServer.PlayGame(context, &types.MsgPlayGame{
@@ -85,7 +89,7 @@ func TestPlayMoveSavedGame(t *testing.T) {
 }
 
 func TestPlayGame1Emitted(t *testing.T) {
-	msgServer, k, context := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, k, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
 	msgServer.PlayGame(context, &types.MsgPlayGame{
 		Creator:   bob,
 		GameIndex: "1",
@@ -114,7 +118,7 @@ func TestPlayGame1Emitted(t *testing.T) {
 }
 
 func TestPlayGame2Emitted(t *testing.T) {
-	msgServer, k, context := SetupMsgServerWithOneGameForPlayMove(t)
+	msgServer, k, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
 	msgServer.PlayGame(context, &types.MsgPlayGame{
 		Creator:   bob,
 		GameIndex: "1",

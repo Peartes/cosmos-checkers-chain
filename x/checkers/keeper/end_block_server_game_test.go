@@ -10,7 +10,7 @@ import (
 )
 
 func TestForfeitUnplayed(t *testing.T) {
-    _, keeper, context := SetupMsgServerWithOneGameForPlayMove(t)
+    _, keeper, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
     ctx := sdk.UnwrapSDKContext(context)
     game1, found := keeper.GetStoredGame(ctx, "1")
     require.True(t, found)
@@ -42,7 +42,7 @@ func TestForfeitUnplayed(t *testing.T) {
 }
 
 func TestForfeitPlayedTwice(t *testing.T) {
-    msgServer, keeper, context := SetupMsgServerWithOneGameForPlayMove(t)
+    msgServer, keeper, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
     ctx := sdk.UnwrapSDKContext(context)
     msgServer.PlayGame(context, &types.MsgPlayGame{
         Creator:   bob,

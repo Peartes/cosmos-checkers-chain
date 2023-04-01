@@ -9,7 +9,7 @@ import (
 )
 
 func TestPlayMove2Games2MovesHasSavedFifo(t *testing.T) {
-    msgServer, keeper, context := SetupMsgServerWithOneGameForPlayMove(t)
+    msgServer, keeper, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
     ctx := sdk.UnwrapSDKContext(context)
     msgServer.CreateGame(context, &types.MsgCreateGame{
         Creator: bob,
