@@ -71,6 +71,7 @@ func TestCreate1GameEmitted(t *testing.T) {
 		Creator: alice,
 		Black:   bob,
 		Red:     carol,
+		Wager:   0,
 	})
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	require.NotNil(t, sdkCtx)
@@ -84,6 +85,7 @@ func TestCreate1GameEmitted(t *testing.T) {
 			{Key: "game-index", Value: "1"},
 			{Key: "black", Value: bob},
 			{Key: "red", Value: carol},
+			{Key: "wager", Value: "0"},
 		},
 	}, event)
 }

@@ -42,7 +42,8 @@ func TestForfeitUnplayed(t *testing.T) {
 }
 
 func TestForfeitPlayedTwice(t *testing.T) {
-    msgServer, keeper, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
+    msgServer, keeper, context, _, escrow := SetupMsgServerWithOneGameForPlayMove(t)
+    escrow.ExpectAny(context)
     ctx := sdk.UnwrapSDKContext(context)
     msgServer.PlayGame(context, &types.MsgPlayGame{
         Creator:   bob,
@@ -80,6 +81,7 @@ func TestForfeitPlayedTwice(t *testing.T) {
         AfterIndex:  "-1",
         Deadline:    oldDeadline,
         Winner:      "r",
+        Wager:       45,
     }, game1)
 
     systemInfo, found := keeper.GetSystemInfo(ctx)

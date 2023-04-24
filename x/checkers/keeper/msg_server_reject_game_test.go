@@ -38,6 +38,7 @@ func TestReject1GameNoPlay(t *testing.T) {
 func TestGameRejected1GameBlackMove(t *testing.T) {
 	msgServer, k, ctx, ctrl, escrow := SetupMsgServerWithOneGameForPlayMove(t)
 	defer ctrl.Finish()
+	escrow.ExpectAny(ctx)
 	// Let black make a move
 	_, playErr := msgServer.PlayGame(ctx, &types.MsgPlayGame{
 		Creator: bob,
@@ -68,8 +69,6 @@ func TestGameRejected1GameBlackMove(t *testing.T) {
 
 	storedGames := k.GetAllStoredGame(sdkContext)
 	require.Len(t, storedGames, 0)
-
-	escrow.ExpectAny(ctx)
 
 	events := sdk.StringifyEvents(sdkContext.EventManager().ABCIEvents())
 	require.EqualValues(t, sdk.StringEvent{

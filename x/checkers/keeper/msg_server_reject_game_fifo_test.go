@@ -50,11 +50,13 @@ func TestRejectMiddleGameHasSavedFifo(t *testing.T) {
         Creator: bob,
         Black:   carol,
         Red:     alice,
+        Wager:  0,
     })
     msgServer.CreateGame(context, &types.MsgCreateGame{
         Creator: carol,
         Black:   alice,
         Red:     bob,
+        Wager:  0,
     })
     msgServer.RejectGame(context, &types.MsgRejectGame{
         Creator:   carol,
@@ -80,6 +82,7 @@ func TestRejectMiddleGameHasSavedFifo(t *testing.T) {
         AfterIndex:  "3",
 		Deadline: types.FormatDeadline(types.GetNextDeadline(ctx)),
 		Winner: "*",
+        Wager:  45,
     }, game1)
     game3, found := keeper.GetStoredGame(ctx, "3")
     require.True(t, found)
@@ -94,5 +97,6 @@ func TestRejectMiddleGameHasSavedFifo(t *testing.T) {
         AfterIndex:  "-1",
 		Deadline: types.FormatDeadline(types.GetNextDeadline(ctx)),
 		Winner: "*",
+        Wager:  0,
     }, game3)
 }

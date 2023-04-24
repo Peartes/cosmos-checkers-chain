@@ -9,13 +9,18 @@ import (
 )
 
 func TestPlayMove2Games2MovesHasSavedFifo(t *testing.T) {
-    msgServer, keeper, context, _, _ := SetupMsgServerWithOneGameForPlayMove(t)
+    msgServer, keeper, context, _, escrow := SetupMsgServerWithOneGameForPlayMove(t)
     ctx := sdk.UnwrapSDKContext(context)
     msgServer.CreateGame(context, &types.MsgCreateGame{
         Creator: bob,
         Black:   carol,
         Red:     alice,
+        Wager:   45,
     })
+    
+	payBob := escrow.ExpectPay(context, bob, 45).Times(1)
+    escrow.ExpectPay(context, carol, 45).After(payBob).Times(1)
+
     msgServer.PlayGame(context, &types.MsgPlayGame{
         Creator:   bob,
         GameIndex: "1",
@@ -53,6 +58,7 @@ func TestPlayMove2Games2MovesHasSavedFifo(t *testing.T) {
         AfterIndex:  "2",
 		Winner: "*",
 		Deadline: types.FormatDeadline(types.GetNextDeadline(ctx)),
+        Wager:    45,
     }, game1)
     game2, found := keeper.GetStoredGame(ctx, "2")
     require.True(t, found)
@@ -67,5 +73,6 @@ func TestPlayMove2Games2MovesHasSavedFifo(t *testing.T) {
         AfterIndex:  "-1",
 		Deadline: types.FormatDeadline(types.GetNextDeadline(ctx)),
 		Winner: "*",
+        Wager: 45,
     }, game2)
 }
