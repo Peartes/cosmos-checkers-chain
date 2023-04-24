@@ -79,7 +79,7 @@ func (k msgServer) PlayGame(goCtx context.Context, msg *types.MsgPlayGame) (*typ
 	} else {
 		k.Keeper.RemoveFromFifo(ctx, &storedGame, &systemInfo)
 		storedGame.Board = ""
-		k.MustPayWinnings(ctx, &storedGame)
+		k.Keeper.MustPayWinnings(ctx, &storedGame)
 	}
 	storedGame.MoveCount++
 	storedGame.Turn = rules.PieceStrings[game.Turn]

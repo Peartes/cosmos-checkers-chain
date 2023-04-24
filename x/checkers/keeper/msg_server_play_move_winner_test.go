@@ -16,6 +16,11 @@ func TestPlayMoveUpToWinner(t *testing.T) {
 	
 	defer ctrl.Finish()
 
+	payBob := escrow.ExpectPay(ctx, bob, 45).AnyTimes()
+    payCarol := escrow.ExpectPay(ctx, carol, 45).After(payBob).AnyTimes()
+    escrow.ExpectRefund(ctx, bob, 90).Times(1).After(payCarol)
+
+
 	testutil.PlayAllMoves(t, msgServer, ctx, "1",  testutil.Game1Moves)
 
 	systemInfo, found := k.GetSystemInfo(sdkContext)
@@ -39,9 +44,9 @@ func TestPlayMoveUpToWinner(t *testing.T) {
 		AfterIndex:  "-1",
 		Deadline:    types.FormatDeadline(time.Time(sdkContext.BlockTime().Add(types.MaxTurnDuration))),
 		Winner:      "b",
+		Wager:        45,
 	}, game)
 	
-	escrow.ExpectPay(ctx, bob, game.Wager)
 
 	events := sdk.StringifyEvents(sdkContext.EventManager().ABCIEvents())
 	require.Len(t, events, 2)
@@ -55,4 +60,14 @@ func TestPlayMoveUpToWinner(t *testing.T) {
         {Key: "winner", Value: "b"},
         {Key: "board", Value: "*b*b****|**b*b***|*****b**|********|***B****|********|*****b**|********"},
     }, event.Attributes[(len(testutil.Game1Moves)-1)*6:])
+}
+func TestPlayMoveUpToWinnerCalledBank(t *testing.T) {
+    msgServer, _, context, ctrl, escrow := SetupMsgServerWithOneGameForPlayMove(t)
+    defer ctrl.Finish()
+    payBob := escrow.ExpectPay(context, bob, 45).AnyTimes()
+    payCarol := escrow.ExpectPay(context, carol, 45).After(payBob).AnyTimes()
+    escrow.ExpectRefund(context, bob, 90).Times(1).After(payCarol)
+	
+    testutil.PlayAllMoves(t, msgServer, context, "1", testutil.Game1Moves)
+
 }

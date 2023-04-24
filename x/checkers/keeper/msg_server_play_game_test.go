@@ -15,9 +15,9 @@ import (
 )
 
 func SetupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper.Keeper, context.Context, *gomock.Controller, *testutil.MockBankEscrowKeeper) {
-	k, ctx := keepertest.CheckersKeeper(t)
 	ctrl := gomock.NewController(t)
     bankMock := testutil.NewMockBankEscrowKeeper(ctrl)
+	k, ctx := keepertest.CheckersKeeperWithMocks(t, bankMock)
 	checkers.InitGenesis(ctx, *k, *types.DefaultGenesis())
 	server := keeper.NewMsgServerImpl(*k)
 	context := sdk.WrapSDKContext(ctx)
@@ -25,6 +25,7 @@ func SetupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper
 		Creator: alice,
 		Black:   bob,
 		Red:     carol,
+		Wager: 	 45,
 	})
 	return server, *k, context, ctrl, bankMock
 }
