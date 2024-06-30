@@ -1,10 +1,29 @@
 {
-  "USDT": {
-    "nativeNetwork": "ethereum",
-    "nativeContractAddress": "0xEad83DEB3e9764fb252974E6b31997048dC52b63",
-    "denomination": 18,
-    "chainlinkFeedAddress": "",
-    "logo": "https://raw.githubusercontent.com/ava-labs/avalanche-bridge-resources/main/tokens/USDT/logo.png",
-    "coingeckoId": "tether"
-  }
+  "name": "Nostro Token List",
+  "timestamp": "2024-06-30T16:08:45.439Z",
+  "keywords": ["defi"],
+  "logoURI": "ipfs://QmQAGtNJ2rSGpnP6dh6PPKNSmZL8RTZXmgFwgTdy5Nz5mx",
+  "version": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "tokens": [
+    {
+      "chainId": 11155111,
+      "name": "USDC",
+      "address": "0x1fa587BB95c72B9777026e0C46E7EAAdEB7117a7",
+      "decimals": 18,
+      "symbol": "USDC",
+      "logoURI": "https://explorer.waterfall.network/favicon-72-precomposed.png"
+    },
+    {
+      "chainId": 11155111,
+      "name": "USDT",
+      "address": "0xEad83DEB3e9764fb252974E6b31997048dC52b63",
+      "decimals": 18,
+      "symbol": "USDT",
+      "logoURI": "https://explorer.waterfall.network/favicon-72-precomposed.png"
+    }
+  ]
 }
