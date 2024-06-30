@@ -1,0 +1,10 @@
+{
+  "USDT": {
+    "nativeNetwork": "ethereum",
+    "nativeContractAddress": "0xEad83DEB3e9764fb252974E6b31997048dC52b63",
+    "denomination": 18,
+    "chainlinkFeedAddress": "",
+    "logo": "https://raw.githubusercontent.com/ava-labs/avalanche-bridge-resources/main/tokens/USDT/logo.png",
+    "coingeckoId": "tether"
+  }
+}
